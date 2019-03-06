@@ -1,0 +1,20 @@
+{
+    "name": "utilisateur/myframework",
+    "description": "Cre\u0000 mon preimier framework en PHP POO MVC",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "berrahal-idriss",
+            "email": "idriss.berahal@le-campus-numerique.fr"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+
+    "autoload": {
+        "psr-4": {
+            "Core\\": "core",
+            "App\\": "src"
+        }
+    }
+}
