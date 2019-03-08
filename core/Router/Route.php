@@ -6,12 +6,13 @@
  * Time: 09:47
  */
 
-namespace Core;
+namespace Core\Router;
 
+
+use Core\Request;
 
 class Route
 {
-
 
     /**
      * @var string
@@ -37,6 +38,7 @@ class Route
      * @var array
      */
     private $args;
+
     /**
      * Route constructor.
      * @param string $name
@@ -45,27 +47,29 @@ class Route
      * @param string $controller
      * @param string $action
      */
-    
-public function __construct( $name,$path,array $parameters,$controller,$action)
-{
 
-    $this->name = $name;
-    $this->path = $path;
-    $this->parameters = $parameters;
-    $this->controller = $controller;
-    $this->action = $action;
-}
+    public function __construct($name, $path, array $parameters = [], $controller, $action)
+    {
+        $this->name = $name;
+        $this->path = $path;
+        $this->parameters = $parameters;
+        $this->controller = $controller;
+        $this->action = $action;
+    }
 
     /**
+     * @param Request $request
+     * @param Router $router
      * @return mixed
      */
-    public function call()
+    public function call(Request $request, Router $router)
     {
         $controller = $this->controller;
         // On instancie dynamiquement le contrôleur
-        $controller = new $controller;
+        $controller = new $controller($request, $router);
         // call_user_func_array est une fonction pré-implementé qui permet d'appeler une méthode (ou une fonction, cf la doc) d'une classe et de lui passer des arguments
-        return call_user_func_array([$controller,$this->action],$this->args);
+        return call_user_func_array([$controller, $this->action], $this->args);
+
     }
 
     /**
@@ -75,18 +79,18 @@ public function __construct( $name,$path,array $parameters,$controller,$action)
     public function match($requestUri)
     {
         // On génère un nouveau chemin en remplaçant les paramètres par des regexp
-        $path= preg_replace_callback("/:(\w+)/", [$this, "parameterMatch"], $this->path);
+        $path = preg_replace_callback("/:(\w+)/", [$this, "parameterMatch"], $this->path);
         // On échappe chaque "/" pour que notre regexp puisse reconnaître le "/"
-        $path = str_replace("/","\/",$path);
+        $path = str_replace("/", "\/", $path);
         // Si notre requpete actuelle ne correspond pas à la regexp alons on renvoie false
-        if(!preg_match("/^$path$/i", $requestUri,$matches))
-        {
+        if (!preg_match("/^$path$/i", $requestUri, $matches)) {
             return false;
         }
         // Sinon on remplit notre tableau d'arguments avec les valeurs de chaque paramètre de notre route
-        $this->arg = array_slice($matches,1);
+        $this->args = array_slice($matches, 1);
         return true;
     }
+
     /**
      * @param $match
      * @return string
@@ -94,12 +98,27 @@ public function __construct( $name,$path,array $parameters,$controller,$action)
     private function parameterMatch($match)
     {
         // Si nous avons bien définie notre paramètre alors on renvoie la regexp associé
-        if(isset($this->parameters[$match[1]])) {
-            return sprintf("(%s)",$this->parameters[$match[1]]);
+        if (isset($this->parameters[$match[1]])) {
+            return sprintf("(%s)", $this->parameters[$match[1]]);
         }
         // Sinon on renvoie une regexp par défaut
         return '([^/]+)';
     }
+
+    /**
+     * @param $args
+     * @return string
+     */
+    public function generateUrl($args)
+    {
+        // On remplace chaque paramètre du chemin par les arguments transmis
+        $url = str_replace(array_keys($args), $args, $this->path);
+        // On supprime les ":"
+        $url = str_replace(":", "", $url);
+        return $url;
+    }
+
+
     /**
      * @return string
      */
@@ -107,6 +126,7 @@ public function __construct( $name,$path,array $parameters,$controller,$action)
     {
         return $this->name;
     }
+
     /**
      * @return string
      */
@@ -114,6 +134,7 @@ public function __construct( $name,$path,array $parameters,$controller,$action)
     {
         return $this->path;
     }
+
     /**
      * @return array
      */
@@ -121,6 +142,7 @@ public function __construct( $name,$path,array $parameters,$controller,$action)
     {
         return $this->parameters;
     }
+
     /**
      * @return string
      */
@@ -128,6 +150,7 @@ public function __construct( $name,$path,array $parameters,$controller,$action)
     {
         return $this->controller;
     }
+
     /**
      * @return string
      */
