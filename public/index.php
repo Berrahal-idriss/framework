@@ -9,6 +9,7 @@
 
 require __DIR__ . "/../vendor/autoload.php";
 
+use App\Controller\TestsController;
 use \Core\Request;
 use Core\Router\Route;
 use Core\Router\Router;
@@ -20,11 +21,11 @@ $router = new Router($request);
 
 try {
     $router
-        ->addRoute(new Route ("defaultRoute", "/", [], \App\Controller\TestsController::class, "defaultroute"))
-
-        ->addRoute(new Route ("testsFoo", "/tests/foo", [], \App\Controller\TestsController::class, "foo"))
-        ->addRoute(new Route ("testsBar", "/tests/bar/:param", ["param" => "[\w]+"], \App\Controller\TestsController::class, "bar"))
-        ->addRoute(new Route ("redirected", "/tests/redirection/:param", ["param" => "[\w]+"], \App\Controller\TestsController::class, "redirection"))
+        ->addRoute(new Route ("index", "/users", [], \App\Controller\UserController::class, 'index'))
+        ->addRoute(new Route ("login", "/users/login", [], \App\Controller\UserController::class, 'login'))
+        ->addRoute(new Route ("testsFoo", "/tests/foo", [], TestsController::class, 'foo'))
+        ->addRoute(new Route ("testsBar", "/tests/bar/:param", ["param" => "[\w]+"], TestsController::class, "bar"))
+        ->addRoute(new Route ("redirected", "/tests/redirection/:param", ["param" => "[\w]+"], TestsController::class, "redirection"));
 
 
     /**

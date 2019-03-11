@@ -1,3 +1,4 @@
+<?php /* C:\wamp64\www\myframework\src\View/index.blade.php */ ?>
 <html>
 <head></head>
 <body>

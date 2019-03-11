@@ -1,3 +1,4 @@
+<?php /* C:\wamp64\www\myframework\src\View/foo.blade.php */ ?>
 <!doctype html>
 <html lang="fr">
     <head>

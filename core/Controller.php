@@ -9,18 +9,21 @@
 
 namespace Core;
 use Core\Router\Router;
-use vendor\duncan3dc\blade\src;
+use duncan3dc\Laravel\BladeInstance;
 
 abstract class Controller
 {
     /**
      * @var Request
      */
-    private $request;
+    protected $request;
     /**
      * @var Router
      */
     private $router;
+
+    private $blade;
+
     /**
      * Controller constructor.
      *
@@ -29,6 +32,7 @@ abstract class Controller
      */
     public function __construct(Request $request, Router $router)
     {
+        $this->blade = new BladeInstance($_SERVER['DOCUMENT_ROOT'] . '/../src/View/', $_SERVER['DOCUMENT_ROOT'] . '/../tmp/cache/views/');
         $this->request = $request;
         $this->router = $router;
     }
@@ -49,9 +53,6 @@ abstract class Controller
      */
     protected function render($filename,$data = [])
     {
-
-
         echo $this->blade->render($filename,$data);
-
     }
 }

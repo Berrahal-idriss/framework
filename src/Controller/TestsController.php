@@ -10,26 +10,29 @@ namespace App\Controller;
 class TestsController extends AppController
 {
 
-    public function defaultroute()
-    {
-        echo 'homepage';
-    }
+
+    /**
+     *
+     */
     public function foo()
     {
-        echo ('Hello world !');
-
+        return $this->render('foo');
     }
-
+    /**
+     * @param $bar
+     *
+     * @return
+     */
     public function bar($bar)
     {
-        echo $bar;
+        return $this->render('bar', compact('bar'));
     }
-
-    public function redirection($args)
+    /**
+     * @param $bar
+     * @throws \Exception
+     */
+    public function redirection($bar)
     {
-
-        die($args);
+        $this->redirect("testsBar", ["param" => $bar]);
     }
-
-
 }
